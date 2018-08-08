@@ -1,6 +1,6 @@
 <?php
 
-	class SwooleWebSocket
+	class SwooleWebSocket implements ServerIns
 	{
 		private $server;
 
@@ -13,18 +13,27 @@
 
 		private function bind()
 		{
-			$this->server->on('open', function (swoole_websocket_server $server, $request) {
-	    		echo "server: handshake success with fd{$request->fd}\n";
-			});
+			$this->server->on('open', [$this, 'open']);
 
-			$this->server->on('message', function (swoole_websocket_server $server, $frame) {
-			    echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
-			    $server->push($frame->fd, "This message is from swoole websocket server.");
-			});
+			$this->server->on('message', [$this, 'message']);
 
-			$this->server->on('close', function ($ser, $fd) {
-			    echo "client {$fd} closed\n";
-			});
+			$this->server->on('close', [$this, 'close']);
+		}
+
+		private function open(swoole_websocket_server $server, $request)
+		{
+			echo "server: handshake success with fd{$request->fd}\n";
+		}
+
+		private function message(swoole_websocket_server $server, $frame)
+		{
+			echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
+		    $server->push($frame->fd, "This message is from swoole websocket server.");
+		}
+
+		private function close (swoole_websocket_server $server, $fd)
+		{
+			echo "client {$fd} closed\n";
 		}
 
 		private function start()
