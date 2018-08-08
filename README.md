@@ -1,8 +1,8 @@
 > # Rework的坑点:
 >   * 版本
->       > laravel5.3
->       > php>=5.6.4
->       > composer 应该都行
+>       > * laravel5.3
+>       > * php>=5.6.4
+>       > * composer 应该都行
 >   * 发版后代码目录改变，需要注意重启队列脚本:
 >       > * ps -aux | grep queue
 >       > * kill ***
